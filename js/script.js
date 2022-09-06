@@ -14,9 +14,10 @@ const btnHold = document.querySelector('.btn--hold');
 
 /************************************************************************************ */
 // DATA
-const totalScores = [0, 0];
+const playerScores = [0, 0];
 let activePlayer = 0;
 let currentScore = 0;
+let isPlaying = true;
 
 
 //************************************************************************************/ 
@@ -25,26 +26,63 @@ lblTotalScore0.textContent = 0;
 lblTotalScore1.textContent = 0;
 diceImg.classList.add('hidden');
 
+//************************************************************************************/ 
+// Functions
+function switchPlayer() {
+    lblPlayer0.classList.toggle('player--active');
+    lblPlayer1.classList.toggle('player--active');
+    
+    // Reset the current score.
+    currentScore = 0;
+    document.querySelector(`#current--${activePlayer}`).textContent = currentScore;
+
+    activePlayer = activePlayer === 0 ? 1 : 0;
+}
+
 /**************************************************************************************/
 // Event handlers
 btnRoll.addEventListener('click', function() {
-    // Generate the dice roll.
-    const roll = Math.trunc(Math.random() * 6) + 1;
+    if(isPlaying){
+        // Roll a die.
+        const roll = Math.trunc(Math.random() * 6) + 1;
 
-    // (View) Show the relevant dice.
-    diceImg.classList.remove('hidden');
-    diceImg.src = `/imgs/dice-${roll}.png`;
+        // Show the dice.
+        diceImg.classList.remove('hidden');
+        diceImg.src = `./imgs/dice-${roll}.png`;
 
-    // Check if user roll 1.
-    if(roll !== 1){ 
-        currentScore += roll;
-        document.querySelector(`#current--${activePlayer}`).textContent = currentScore;
-    } else { // If roll 1, then switch to user.
-        document.querySelector(`#current--${activePlayer}`).textContent = 0;
-        currentScore = 0;
-        activePlayer = activePlayer === 0 ? 1 : 0;
-        lblPlayer0.classList.toggle('player--active');
-        lblPlayer1.classList.toggle('player--active');
+        if(roll !== 1){ // If not 1, then add the points to the current player.
+            currentScore += roll;
+            document.querySelector(`#current--${activePlayer}`).textContent = currentScore;
+        } else { // If 1, change player and reset current score.
+            switchPlayer();
+        }
     }
+});
 
-})
+btnHold.addEventListener('click', function() {
+    if(isPlaying){
+        //1. Add the current score to the total player's score
+        playerScores[activePlayer] += currentScore;
+        document.querySelector(`#score--${activePlayer}`).textContent = playerScores[activePlayer];
+
+        //2. Check if the total score is >= 100. If so, then player wins and game is done.
+        if(playerScores[activePlayer] >= 20){
+            // Remove the ability to roll dice or hold.
+            isPlaying = false;
+
+            // Set a new class to the winner.
+            document.querySelector(`.player--${activePlayer}`).classList.add('player--winner');
+
+            // Remove the dice from the game.
+            diceImg.classList.add('hidden');
+        }
+
+        //3. If the total score is NOT >= 100, then switch to the next player.
+        switchPlayer();
+    }
+    
+});
+
+btnNew.addEventListener('click', function() {
+
+});
