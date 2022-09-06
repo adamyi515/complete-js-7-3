@@ -14,7 +14,7 @@ const btnHold = document.querySelector('.btn--hold');
 
 /************************************************************************************ */
 // DATA
-const playerScores = [0, 0];
+let playerScores = [0, 0];
 let activePlayer = 0;
 let currentScore = 0;
 let isPlaying = true;
@@ -38,6 +38,32 @@ function switchPlayer() {
 
     activePlayer = activePlayer === 0 ? 1 : 0;
 }
+
+function init(){
+    playerScores = [0, 0];
+    activePlayer = 0;
+    currentScore = 0;
+    isPlaying = true;
+
+    // Remove all aesthetics from the game.
+    lblPlayer0.classList.remove('player--active');
+    lblPlayer1.classList.remove('player--active');
+    
+    lblPlayer0.classList.remove('player--winner');
+    lblPlayer1.classList.remove('player--winner');
+
+    // Update the view to its default state.
+    lblTotalScore0.textContent = 0;
+    lblTotalScore1.textContent = 0;
+
+    lblCurrentScore0.textContent = 0;
+    lblCurrentScore1.textContent = 0;
+
+    lblPlayer0.classList.add('player--active');
+    diceImg.classList.add('hidden');
+}
+
+init();
 
 /**************************************************************************************/
 // Event handlers
@@ -83,6 +109,4 @@ btnHold.addEventListener('click', function() {
     
 });
 
-btnNew.addEventListener('click', function() {
-
-});
+btnNew.addEventListener('click', init);
